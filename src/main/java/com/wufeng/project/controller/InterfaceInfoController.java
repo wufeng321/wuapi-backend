@@ -16,7 +16,6 @@ import com.wufeng.project.model.entity.InterfaceInfo;
 import com.wufeng.project.model.entity.User;
 import com.wufeng.project.service.InterfaceInfoService;
 import com.wufeng.project.service.UserService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +34,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/interfaceInfo")
 @Slf4j
-@Api(tags = "接口管理")
 public class InterfaceInfoController {
 
     @Resource
@@ -52,7 +50,6 @@ public class InterfaceInfoController {
      * @return
      */
     @PostMapping("/add")
-    @ApiOperation("新增接口")
     public BaseResponse<Long> addInterfaceInfo(@RequestBody InterfaceInfoAddRequest interfaceInfoAddRequest, HttpServletRequest request) {
         if (interfaceInfoAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -79,7 +76,6 @@ public class InterfaceInfoController {
      * @return
      */
     @PostMapping("/delete")
-    @ApiOperation("删除接口")
     public BaseResponse<Boolean> deleteInterfaceInfo(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
