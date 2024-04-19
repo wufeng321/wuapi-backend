@@ -3,10 +3,7 @@ package com.wufeng.project.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wufeng.project.annotation.AuthCheck;
-import com.wufeng.project.common.BaseResponse;
-import com.wufeng.project.common.DeleteRequest;
-import com.wufeng.project.common.ErrorCode;
-import com.wufeng.project.common.ResultUtils;
+import com.wufeng.project.common.*;
 import com.wufeng.project.constant.CommonConstant;
 import com.wufeng.project.exception.BusinessException;
 import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoAddRequest;
@@ -14,9 +11,10 @@ import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
 import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
 import com.wufeng.project.model.entity.InterfaceInfo;
 import com.wufeng.project.model.entity.User;
+import com.wufeng.project.model.enums.InterfaceInfoStatusEnum;
 import com.wufeng.project.service.InterfaceInfoService;
 import com.wufeng.project.service.UserService;
-import io.swagger.annotations.ApiOperation;
+import com.wufeng.wuapiclientsdk.client.WuApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -27,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * 帖子接口
+ * 接口管理
  * @author wufeng
  */
 @RestController
@@ -40,6 +38,9 @@ public class InterfaceInfoController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private WuApiClient wuApiClient;
 
     /**
      * 创建
@@ -190,6 +191,67 @@ public class InterfaceInfoController {
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size), queryWrapper);
         return ResultUtils.success(interfaceInfoPage);
+    }
+
+    /**
+     * 发布接口
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/online")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                     HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 1.校验接口是否存在
+        long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 2.判断接口是否可以调用
+        com.wufeng.wuapiclientsdk.model.User user = new com.wufeng.wuapiclientsdk.model.User();
+        user.setUsername("wufeng");
+        String res = wuApiClient.getUserNameByPost(user);
+        if (StringUtils.isBlank(res)) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口校验失败");
+        }
+        // 3.修改数据库中的接口状态为上线
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 下线接口
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/offline")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                     HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 1.校验接口是否存在
+        long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 3.修改数据库中的接口状态为下线
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
     }
 
 }
