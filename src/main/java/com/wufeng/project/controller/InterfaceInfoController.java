@@ -2,11 +2,13 @@ package com.wufeng.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.Gson;
 import com.wufeng.project.annotation.AuthCheck;
 import com.wufeng.project.common.*;
 import com.wufeng.project.constant.CommonConstant;
 import com.wufeng.project.exception.BusinessException;
 import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoAddRequest;
+import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoInvokeRequest;
 import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
 import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
 import com.wufeng.project.model.entity.InterfaceInfo;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -252,5 +255,36 @@ public class InterfaceInfoController {
         interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
         boolean result = interfaceInfoService.updateById(interfaceInfo);
         return ResultUtils.success(result);
+    }
+
+    @PostMapping("/invoke")
+    public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
+                                                      HttpServletRequest request) {
+        if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 校验接口是否存在
+        long id = interfaceInfoInvokeRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 获取请求参数
+        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+        // 检查接口是否下线
+        if (InterfaceInfoStatusEnum.OFFLINE.getValue()==oldInterfaceInfo.getStatus()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
+        }
+
+        User loginUser = userService.getLoginUser(request);
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+
+        Gson gson = new Gson();
+        com.wufeng.wuapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.wufeng.wuapiclientsdk.model.User.class);
+
+        WuApiClient tempClient = new WuApiClient(accessKey, secretKey);
+        String res = tempClient.getUserNameByPost(user);
+        return ResultUtils.success(res);
     }
 }
