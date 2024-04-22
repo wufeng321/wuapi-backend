@@ -1,13 +1,12 @@
 package com.wufeng.project.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wufeng.project.common.ErrorCode;
 import com.wufeng.project.exception.BusinessException;
-import com.wufeng.project.model.entity.InterfaceInfo;
+import com.wufeng.project.mapper.UserInterfaceInfoMapper;
 import com.wufeng.project.model.entity.UserInterfaceInfo;
 import com.wufeng.project.service.UserInterfaceInfoService;
-import com.wufeng.project.mapper.UserInterfaceInfoMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -34,6 +33,18 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "剩余次数不能小于0");
         }
 
+    }
+
+    @Override
+    public boolean invokeCount(long interfaceInfoId, long userId) {
+        if(interfaceInfoId<=0||userId<=0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        UpdateWrapper<UserInterfaceInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("interfaceInfoId",interfaceInfoId);
+        updateWrapper.eq("userId",userId);
+        updateWrapper.setSql("leftNum=leftNum-1,totalNum=totalNum+1");
+        return this.update(updateWrapper);
     }
 }
 
