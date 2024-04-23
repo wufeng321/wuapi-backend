@@ -36,3 +36,12 @@ wuapi:
   client:
     access-key: taco
     secret-key: abcd
+dubbo:
+  application:
+    name: wuapi-backend-provider
+  protocol:
+    name: dubbo
+    port: 22221
+  registry:
+    id: nacos-registry
+    address: nacos://localhost:8848
