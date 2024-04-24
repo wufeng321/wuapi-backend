@@ -1,7 +1,7 @@
 package com.wufeng.project.service;
 
-import com.wufeng.project.model.entity.InterfaceInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wufeng.wuapicommon.model.entity.InterfaceInfo;
 
 /**
 * @author wufeng

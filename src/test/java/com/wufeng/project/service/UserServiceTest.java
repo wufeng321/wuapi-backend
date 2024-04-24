@@ -1,6 +1,6 @@
 package com.wufeng.project.service;
 
-import com.wufeng.project.model.entity.User;
+import com.wufeng.wuapicommon.model.entity.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

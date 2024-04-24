@@ -2,7 +2,7 @@ package com.wufeng.project.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wufeng.project.model.entity.User;
+import com.wufeng.wuapicommon.model.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 

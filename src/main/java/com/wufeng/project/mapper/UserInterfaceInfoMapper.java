@@ -1,7 +1,7 @@
 package com.wufeng.project.mapper;
 
-import com.wufeng.project.model.entity.UserInterfaceInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.wufeng.wuapicommon.model.entity.UserInterfaceInfo;
 
 /**
 * @author wufeng

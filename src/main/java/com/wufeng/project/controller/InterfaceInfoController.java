@@ -11,12 +11,12 @@ import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoAddRequest;
 import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoInvokeRequest;
 import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
 import com.wufeng.project.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
-import com.wufeng.project.model.entity.InterfaceInfo;
-import com.wufeng.project.model.entity.User;
 import com.wufeng.project.model.enums.InterfaceInfoStatusEnum;
 import com.wufeng.project.service.InterfaceInfoService;
 import com.wufeng.project.service.UserService;
 import com.wufeng.wuapiclientsdk.client.WuApiClient;
+import com.wufeng.wuapicommon.model.entity.InterfaceInfo;
+import com.wufeng.wuapicommon.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 
 /**

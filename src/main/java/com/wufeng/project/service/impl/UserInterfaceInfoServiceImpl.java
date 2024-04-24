@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wufeng.project.common.ErrorCode;
 import com.wufeng.project.exception.BusinessException;
 import com.wufeng.project.mapper.UserInterfaceInfoMapper;
-import com.wufeng.project.model.entity.UserInterfaceInfo;
 import com.wufeng.project.service.UserInterfaceInfoService;
+import com.wufeng.wuapicommon.model.entity.UserInterfaceInfo;
 import org.springframework.stereotype.Service;
 
 /**
