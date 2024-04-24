@@ -13,7 +13,7 @@ spring:
   # session 失效时间（分钟）如果没有redis，store-type: none
   session:
     timeout: 86400
-    store-type: redis
+    store-type: none
   # redis 配置
   redis:
     port: 6379
