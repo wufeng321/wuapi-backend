@@ -9,6 +9,9 @@ import com.wufeng.project.service.UserInterfaceInfoService;
 import com.wufeng.wuapicommon.model.entity.UserInterfaceInfo;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 /**
 * @author wufeng
 * @description 针对表【user_interface_info(用户调用接口关系)】的数据库操作Service实现
@@ -17,6 +20,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoMapper, UserInterfaceInfo>
     implements UserInterfaceInfoService{
+
+    @Resource
+    private UserInterfaceInfoMapper userInterfaceInfoMapper;
 
     @Override
     public void validUserInterfaceInfo(UserInterfaceInfo userInterfaceInfo, boolean add) {
@@ -45,6 +51,11 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
         updateWrapper.eq("userId",userId);
         updateWrapper.setSql("leftNum=leftNum-1,totalNum=totalNum+1");
         return this.update(updateWrapper);
+    }
+
+    @Override
+    public List<UserInterfaceInfo> listTopInvokeInterfaceInfo(int limit) {
+        return userInterfaceInfoMapper.listTopInvokeInterfaceInfo(limit);
     }
 }
 
