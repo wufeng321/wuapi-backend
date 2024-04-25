@@ -1,5 +1,6 @@
 package com.wufeng.project.controller;
 
+import cn.hutool.http.HttpResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
@@ -217,8 +218,8 @@ public class InterfaceInfoController {
         // 2.判断接口是否可以调用
         com.wufeng.wuapiclientsdk.model.User user = new com.wufeng.wuapiclientsdk.model.User();
         user.setUsername("wufeng");
-        String res = wuApiClient.getUserNameByPost(user);
-        if (StringUtils.isBlank(res)) {
+        HttpResponse res = wuApiClient.getUserNameByPost(user);
+        if (res.getStatus()!=200) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口校验失败");
         }
         // 3.修改数据库中的接口状态为上线
@@ -283,7 +284,12 @@ public class InterfaceInfoController {
         com.wufeng.wuapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.wufeng.wuapiclientsdk.model.User.class);
 
         WuApiClient tempClient = new WuApiClient(accessKey, secretKey);
-        String res = tempClient.getUserNameByPost(user);
-        return ResultUtils.success(res);
+        // todo: 判断调用失败的具体原因，秘钥错误、接口不存在、参数错误、调用次数用完等
+        HttpResponse res = tempClient.getUserNameByPost(user);
+        if(res.getStatus()==200){
+            return ResultUtils.success(res.body());
+        }else{
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "接口调用失败");
+        }
     }
 }
