@@ -1,0 +1,9 @@
+#  应用服务 WEB 访问端口
+server:
+  port: 8123
+  servlet:
+    context-path: /api
+wuapi:
+  client:
+    access-key: taco
+    secret-key: abcd
